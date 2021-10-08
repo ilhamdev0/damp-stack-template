@@ -24,7 +24,7 @@ websrv:
 
 help:
 	@echo "Docker+Apache+MySQL+PHP Local Development"
-	@echo "Warning: Setup ini dikhususkan untuk kebutuhan development saja"
+	@echo "Warning: Hanya dikhususkan untuk kebutuhan development saja"
 	@echo "Gunakan command 'make generate' saat pertama kali install"
 	@echo "command lain yang dapat dipakai:"
 	@echo " make generate		: Setup saat pertama kali install"
