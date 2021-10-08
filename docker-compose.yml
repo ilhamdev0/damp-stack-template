@@ -1,0 +1,51 @@
+version: '3'
+services:
+    db:
+        build:
+            context: .
+            dockerfile: docker/mysql/Dockerfile
+        environment: 
+            MYSQL_DATABASE: ${MYSQL_DEFAULT_DB}
+            MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+            MYSQL_USER: ${MYSQL_DEFAULT_USER}
+            MYSQL_PASSWORD: ${MYSQL_DEFAULT_PASSWORD}
+        volumes:
+            - ./log/mysql:/var/log/mysql
+            - db_data:/var/lib/mysql
+        networks:
+            - vnet
+        restart: unless-stopped
+    web:
+        container_name: webserver
+        build:
+            context: .
+            dockerfile: docker/apache/Dockerfile
+            args:
+                uid: ${UID}
+        environment:
+            - APACHE_RUN_USER=#${UID}
+            - APACHE_RUN_GROUP=#${UID}
+        volumes: 
+            - ./source:/var/www/html
+            - ./log/apache:/var/log/apache2
+        networks:
+            - vnet
+        ports:
+            - ${WEBSERVER_PORT}:80
+        depends_on: 
+            - db
+        links:
+            - db
+        restart: unless-stopped
+    adminer:
+        image: adminer
+        ports:
+            - ${DBA_PORT}:8080
+        networks:
+            - vnet
+        restart: unless-stopped
+volumes:
+    db_data:
+networks:
+  vnet:
+    driver: bridge
